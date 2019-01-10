@@ -4,7 +4,7 @@ namespace Nddcoder\HttpClient;
 
 use Illuminate\Support\ServiceProvider;
 
-class HttpClientProvider extends ServiceProvider
+class HttpClientServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
