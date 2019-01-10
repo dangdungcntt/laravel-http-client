@@ -1,4 +1,4 @@
-# Integrate with Passport IAM
+# Guzzle Wrapper for laravel
 
 ## Installation
 
