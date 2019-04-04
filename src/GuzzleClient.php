@@ -51,6 +51,7 @@ class GuzzleClient implements HttpClient
                 'method' => $method,
                 'headers' => data_get($options, 'headers'),
                 'auth' => data_get($options, 'auth'),
+                'request_options' => $options,
                 'response' => $responseData,
             ]);
 
