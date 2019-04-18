@@ -2,35 +2,37 @@
 
 namespace Nddcoder\HttpClient;
 
+use Exception;
+use Illuminate\Log\Logger;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Log\Logger;
 
 class GuzzleClient implements HttpClient
 {
-    private $logger;
+    /* @var Logger $logger */
+    protected $logger;
 
-    public function __construct(Logger $logger)
+    /* @var Client $client */
+    protected $client;
+
+
+    public function __construct(Client $client, Logger $logger)
     {
+        $this->client = $client;
         $this->logger = $logger;
-    }
-
-    public function get($url, $options = [])
-    {
-        return $this->request('GET', $url, $options);
     }
 
     public function request($method, $url, $options = [])
     {
         try {
-            $client = new Client();
-            $response = $client->request($method, $url, $options);
+            $response = $this->client->request($method, $url, $options);
         } catch (BadResponseException $exception) {
             $response = $exception->getResponse();
             $this->logger->error('HTTP REQUEST FAILED');
             $this->logger->error($exception);
-        } catch (GuzzleException $e) {
+        } catch (Exception $e) {
+            $this->logger->error('UNKNOWN EXCEPTION');
+            $this->logger->error($exception);
             $response = null;
         } finally {
             $body = optional($response)->getBody();
@@ -59,6 +61,11 @@ class GuzzleClient implements HttpClient
         }
     }
 
+    public function get($url, $options = [])
+    {
+        return $this->request('GET', $url, $options);
+    }
+
     public function post($url, $options = [])
     {
         data_fill($options, 'headers.Content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
@@ -80,3 +87,4 @@ class GuzzleClient implements HttpClient
         return $this->request('DELETE', $url, $options);
     }
 }
+
